@@ -4,11 +4,12 @@ Launch test of the LCS module.
 
 SYNOPSIS:
 
-test_pivotal.py --username username --password password --form-name "oraContact" --record-id "000000000000005C"
-test_pivotal.py --username username --password password --asr-name "SolWeb" --method-name "ConsultaDetalleSiniestro" --parameters string,es-ES --parameters string,0010027100
+test_pivotal.py --username username --password password --command "get_user_id" 
+test_pivotal.py --username username --password password --command "get_form_data" --form-name "oraContact" --record-id "000000000000005C"
+test_pivotal.py --username username --password password --command "execute_asr" --asr-name "SolWeb" --method-name "ConsultaDetalleSiniestro" --parameters "string,es-ES" --parameters "string,0010027100"
 """
 from argparse import ArgumentParser, RawTextHelpFormatter
-import lcs
+from lcs import get_form_data, get_user_id, execute_asr, execute_script
 import logging
 import sys
 
@@ -22,17 +23,25 @@ def launch_test(args):
     Args:
         args (_type_): _description_
     """
-    if args.form_name and args.record_id:
-        response = lcs.get_form_data(args.username, args.password, args.form_name, args.record_id)
-    elif args.asr_name and args.method_name:
+    if args.command == "get_user_id":
+        xml = get_user_id(args.username, args.password, args.form_name, args.record_id)
+    elif args.command == "get_form_data" and args.form_name and args.record_id:
+        xml = get_form_data(args.username, args.password, args.form_name, args.record_id)
+    elif args.command == "execute_asr" and args.asr_name and args.method_name:
         parameters = []
         for parameter in args.parameters:
             (type, value) = parameter[0].split(",")
             parameters.append((type, value))
-        response = lcs.execute_asr(args.username, args.password, args.asr_name, args.method_name, parameters)
+        xml = execute_asr(args.username, args.password, args.asr_name, args.method_name, parameters)
+        
     else:
-        logger.error()
-    logger.info(response)
+        logger.error("Invalid call.")
+    for element in xml.iter():
+        for child in element:
+            print (child.tag, child.text)
+    return xml
+
+    logger.info(xml)
 
 def parse_command_line():
     parser = ArgumentParser(prog='test_pivotal',
@@ -43,6 +52,7 @@ def parse_command_line():
         '--username', help='The username to access the server', required=False, default=None)
     parser.add_argument(
         '--password', help='The password to access the server', required=False, default=None)
+    parser.add_argument('--command', help="Select one command to execute", required=True, default="get_user_id", choices=['execute_asr', 'execute_script', 'get_form_data', 'get_user_id'], )
     parser.add_argument(
         '--form-name', help='The form to call in order to get a specific record', required=False, default=None)
     parser.add_argument(
