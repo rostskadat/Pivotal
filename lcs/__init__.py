@@ -41,12 +41,12 @@ def get_form_data(username, password, form_name: str, record_id: str):
     response = send_command(username, password, xml_command)
     return parse_response(form_name, response.text)
 
-def execute_asr(username, password, asr_name: str, method_name: str):
+def execute_asr(username, password, asr_name: str, method_name: str, parameters:list):
     args = {
         'system_name': SYSTEM_NAME,
         'asr_name': asr_name,
         'method_name': method_name,
-        'parameters': []
+        'parameters': parameters
     }
     xml_command = render_template('execute_asr.jinja2.xml', args)
     response = send_command(username, password, xml_command)
