@@ -36,12 +36,18 @@ def launch_test(args):
         
     else:
         logger.error("Invalid call.")
-    for element in xml.iter():
-        for child in element:
-            print (child.tag, child.text)
-    return xml
+        return
+    d={}
+    for child in xml:
+        if child.tag not in d:
+            d[child.tag]=[]
+        dic={}
+        for child2 in child:
+            if child2.tag not in dic:
+                dic[child2.tag]=child2.text
+        d[child.tag].append(dic)
+    print (d)
 
-    logger.info(xml)
 
 def parse_command_line():
     parser = ArgumentParser(prog='test_pivotal',
