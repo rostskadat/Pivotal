@@ -2,6 +2,8 @@ from jinja2 import FileSystemLoader, Environment
 from os.path import dirname
 import requests
 import xml.etree.ElementTree as ET
+import xmltodict
+
 
 SERVICE_URL = "http://SES000A204221/Pivotal/Services/PivotalServices.aspx"
 LCS_SERVER = "SES000A204221"
@@ -24,7 +26,7 @@ def _send_command(username, password, xml_command):
 def _execute_command(username, password, template, args):
     xml_command = _render_template(template, args)
     response = _send_command(username, password, xml_command)
-    return ET.fromstring(response.text)
+    return xmltodict.parse(response.text)
 
 def get_form_data(username, password, form_name: str, record_id: str):
     args = {
@@ -34,7 +36,7 @@ def get_form_data(username, password, form_name: str, record_id: str):
     }
     return _execute_command(username, password, 'get_form_data.jinja2.xml', args)
 
-def get_user_id(username, password, form_name: str, record_id: str):
+def get_user_id(username, password):
     args = {
         'system_name': SYSTEM_NAME
     }

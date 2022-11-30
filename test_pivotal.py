@@ -24,29 +24,20 @@ def launch_test(args):
         args (_type_): _description_
     """
     if args.command == "get_user_id":
-        xml = get_user_id(args.username, args.password, args.form_name, args.record_id)
+        response = get_user_id(args.username, args.password)
     elif args.command == "get_form_data" and args.form_name and args.record_id:
-        xml = get_form_data(args.username, args.password, args.form_name, args.record_id)
+        response = get_form_data(args.username, args.password, args.form_name, args.record_id)
     elif args.command == "execute_asr" and args.asr_name and args.method_name:
         parameters = []
         for parameter in args.parameters:
             (type, value) = parameter[0].split(",")
             parameters.append((type, value))
-        xml = execute_asr(args.username, args.password, args.asr_name, args.method_name, parameters)
-        
+        response = execute_asr(args.username, args.password, args.asr_name, args.method_name, parameters)
     else:
         logger.error("Invalid call.")
         return
-    d={}
-    for child in xml:
-        if child.tag not in d:
-            d[child.tag]=[]
-        dic={}
-        for child2 in child:
-            if child2.tag not in dic:
-                dic[child2.tag]=child2.text
-        d[child.tag].append(dic)
-    print (d)
+    logger.info (response)
+    return response
 
 
 def parse_command_line():
