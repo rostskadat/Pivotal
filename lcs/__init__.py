@@ -1,5 +1,6 @@
 from jinja2 import FileSystemLoader, Environment
 from os.path import dirname
+import logging
 import requests
 import xml.etree.ElementTree as ET
 import xmltodict
@@ -25,7 +26,9 @@ def _send_command(username, password, xml_command):
 
 def _execute_command(username, password, template, args):
     xml_command = _render_template(template, args)
+    logging.debug(xml_command)
     response = _send_command(username, password, xml_command)
+    logging.debug(response)
     return xmltodict.parse(response.text)
 
 def get_user_id(username, password, context):
