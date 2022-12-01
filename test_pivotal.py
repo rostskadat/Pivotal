@@ -23,16 +23,26 @@ def launch_test(args):
     Args:
         args (_type_): _description_
     """
+    context = { }
+    parameters = []
+    for parameter in args.parameters:
+        (type, value) = parameter[0].split(",")
+        parameters.append((type, value))
+    context['parameters'] = parameters
     if args.command == "get_user_id":
-        response = get_user_id(args.username, args.password)
+        response = get_user_id(args.username, args.password, context)
     elif args.command == "get_form_data" and args.form_name and args.record_id:
-        response = get_form_data(args.username, args.password, args.form_name, args.record_id)
+        context['form_name'] = args.form_name
+        context['record_id'] = args.record_id
+        response = get_form_data(args.username, args.password, context)
     elif args.command == "execute_asr" and args.asr_name and args.method_name:
-        parameters = []
-        for parameter in args.parameters:
-            (type, value) = parameter[0].split(",")
-            parameters.append((type, value))
-        response = execute_asr(args.username, args.password, args.asr_name, args.method_name, parameters)
+        context['asr_name'] = args.asr_name
+        context['method_name'] = args.method_name
+        response = execute_asr(args.username, args.password, context)
+    elif args.command == "execute_script" and args.asr_name and args.method_name:
+        context['form_name'] = args.form_name
+        context['method_name'] = args.method_name
+        response = execute_script(args.username, args.password, context)
     else:
         logger.error("Invalid call.")
         return

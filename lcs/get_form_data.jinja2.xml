@@ -3,7 +3,7 @@
     <systemName>{{system_name}}</systemName>
     <loginType>Active Client</loginType>
     <getFormData>
-        <formName>{form_name}</formName>
-        <recordId>{record_id}</recordId>
+        <formName>{{form_name}}</formName>
+        <recordId>{{record_id}}</recordId>
     </getFormData>
 </command>

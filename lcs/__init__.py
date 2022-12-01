@@ -28,34 +28,18 @@ def _execute_command(username, password, template, args):
     response = _send_command(username, password, xml_command)
     return xmltodict.parse(response.text)
 
-def get_form_data(username, password, form_name: str, record_id: str):
-    args = {
-        'system_name': SYSTEM_NAME,
-        'form_name': form_name,
-        'record_id': record_id
-    }
-    return _execute_command(username, password, 'get_form_data.jinja2.xml', args)
+def get_user_id(username, password, context):
+    context['system_name'] = SYSTEM_NAME
+    return _execute_command(username, password, 'get_user_id.jinja2.xml', context)
 
-def get_user_id(username, password):
-    args = {
-        'system_name': SYSTEM_NAME
-    }
-    return _execute_command(username, password, 'get_user_id.jinja2.xml', args)
+def get_form_data(username, password, context):
+    context['system_name'] = SYSTEM_NAME
+    return _execute_command(username, password, 'get_form_data.jinja2.xml', context)
 
-def execute_asr(username, password, asr_name: str, method_name: str, parameters:list):
-    args = {
-        'system_name': SYSTEM_NAME,
-        'asr_name': asr_name,
-        'method_name': method_name,
-        'parameters': parameters
-    }
-    return _execute_command(username, password, 'execute_asr.jinja2.xml', args)
+def execute_asr(username, password, context):
+    context['system_name'] = SYSTEM_NAME
+    return _execute_command(username, password, 'execute_asr.jinja2.xml', context)
 
-def execute_script(username, password, form_name: str, method_name: str):
-    args = {
-        'system_name': SYSTEM_NAME,
-        'form_name': form_name,
-        'method_name': method_name,
-        'parameters': []
-    }
-    return _execute_command(username, password, 'execute_script.jinja2.xml', args)
+def execute_script(username, password, context):
+    context['system_name'] = SYSTEM_NAME
+    return _execute_command(username, password, 'execute_script.jinja2.xml', context)
